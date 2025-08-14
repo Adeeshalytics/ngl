@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Me Anything</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 16px;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .form-container {
+            margin-bottom: 24px;
+        }
+
+        .message-input {
+            width: 100%;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 16px;
+            font-family: inherit;
+            color: #2d3748;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .message-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #a0aec0;
+            margin-top: 8px;
+            transition: color 0.2s ease;
+        }
+
+        .char-counter.warning {
+            color: #ed8936;
+        }
+
+        .char-counter.error {
+            color: #e53e3e;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message, .error-message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success-message {
+            background: #f0fff4;
+            color: #38a169;
+            border: 1px solid #9ae6b4;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #e53e3e;
+            border: 1px solid #feb2b2;
+        }
+
+        .anonymous-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lock-icon {
+            width: 14px;
+            height: 14px;
+            margin-right: 6px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                margin: 0 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            opacity: 0;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">?</div>
+        
+        <h1>Ask Me Anything</h1>
+        <p class="subtitle">Send me a message anonymously. I won't know who you are!</p>
+        
+        <div class="anonymous-badge">
+            <svg class="lock-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+            100% Anonymous
+        </div>
+
+        <div class="form-container">
+            <textarea 
+                class="message-input" 
+                id="messageInput" 
+                placeholder="Type your message here... Ask me anything, share a secret, or just say hi!"
+                maxlength="500"
+            ></textarea>
+            <div class="char-counter" id="charCounter">0/500</div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitMessage()">
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div class="spinner" id="spinner"></div>
+                <span id="btnText">Send Anonymous Message</span>
+            </div>
+        </button>
+
+        <div class="success-message" id="successMessage">
+            🎉 Your message has been sent anonymously! Thank you for sharing.
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            Oops! Something went wrong. Please try again.
+        </div>
+    </div>
+
+    <script>
+        const messageInput = document.getElementById('messageInput');
+        const charCounter = document.getElementById('charCounter');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('btnText');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Character counter
+        messageInput.addEventListener('input', function() {
+            const length = this.value.length;
+            const maxLength = 500;
+            
+            charCounter.textContent = `${length}/${maxLength}`;
+            
+            if (length > maxLength * 0.9) {
+                charCounter.classList.add('error');
+                charCounter.classList.remove('warning');
+            } else if (length > maxLength * 0.75) {
+                charCounter.classList.add('warning');
+                charCounter.classList.remove('error');
+            } else {
+                charCounter.classList.remove('warning', 'error');
+            }
+            
+            submitBtn.disabled = length === 0;
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+
+        function createConfetti() {
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animation = 'confetti-fall 3s linear forwards';
+                
+                container.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        async function submitMessage() {
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                showError('Please enter a message before sending.');
+                return;
+            }
+
+            if (message.length > 500) {
+                showError('Message is too long. Please keep it under 500 characters.');
+                return;
+            }
+
+            setLoading(true);
+            hideMessages();
+
+            try {
+                // Collect metadata
+                const metadata = {
+                    message: message,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    referer: document.referrer || 'Direct visit',
+                    screenResolution: `${screen.width}x${screen.height}`,
+                    language: navigator.language,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                };
+
+                // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+                const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPIS1-Jeyr88S3vne_eWdiDzrKQFE9tmt6QUa6nRL9YlDwoNaNRvd8Z_crD28K6aab8g/exec';
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(metadata)
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showSuccess();
+                    messageInput.value = '';
+                    charCounter.textContent = '0/500';
+                    charCounter.classList.remove('warning', 'error');
+                    createConfetti();
+                } else {
+                    throw new Error(result.message || 'Server error');
+                }
+            } catch (error) {
+                console.error('Error submitting message:', error);
+                showError('Failed to send message. Please try again.');
+            }
+
+            setLoading(false);
+        }
+
+        // Demo mode removed - now connects to Google Apps Script
+        console.log('Ready to connect to Google Apps Script backend');
+
+        function setLoading(loading) {
+            if (loading) {
+                submitBtn.disabled = true;
+                spinner.style.display = 'inline-block';
+                btnText.textContent = 'Sending...';
+            } else {
+                submitBtn.disabled = messageInput.value.trim() === '';
+                spinner.style.display = 'none';
+                btnText.textContent = 'Send Anonymous Message';
+            }
+        }
+
+        function showSuccess() {
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessages() {
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        // Initial setup
+        submitBtn.disabled = true;
+        
+        // Handle Enter key (Ctrl+Enter to submit)
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                submitMessage();
+            }
+        });
+    </script>
+</body>
+</html>
